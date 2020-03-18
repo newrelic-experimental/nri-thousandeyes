@@ -1,0 +1,65 @@
+apply plugin: 'java'
+apply plugin: 'eclipse'
+
+sourceCompatibility = JavaVersion.VERSION_1_6
+targetCompatibility = JavaVersion.VERSION_1_6
+
+repositories {
+   maven {
+      url 'https://repo1.maven.org/maven2'
+   }
+   mavenLocal()
+}
+
+group = 'com.newrelic.infra.te'
+version = '1.0.0'
+
+configurations {
+    provided
+    compile.extendsFrom provided
+}
+
+dependencies {
+    compile 'com.newrelic.experts:infra_publish:2.2.1'
+    compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
+}
+
+jar {
+    dependsOn configurations.runtime
+    from {
+        (configurations.runtime - configurations.provided).collect {
+            it.isDirectory() ? it : zipTree(it)
+        }
+    } 
+    manifest {
+    		attributes "Main-Class": "com.newrelic.infra.te.TeMonitor"
+    }
+    archiveName 'plugin.jar'
+}
+
+task copyJarToBin(type: Copy) {
+    from jar // shortcut for createJar.outputs.files
+    into "$distsDir"
+}
+
+task copyToConfig(type: Copy) {
+    from 'config'
+    into "$distsDir/config"
+    include 'logback.xml', 'plugin.template.json', 'newrelic.template.json'
+}
+
+task copyScripts(type: Copy) {
+    from 'scripts'
+    into "$distsDir"
+}
+
+task copyReadMe(type: Copy) {
+    from projectDir
+    into "$distsDir"
+    include 'README.md'
+}
+
+build.dependsOn "copyJarToBin"
+build.dependsOn "copyToConfig"
+build.dependsOn "copyScripts"
+build.dependsOn "copyReadMe"

@@ -1,0 +1,21 @@
+{
+	"global": {
+		"account_id": "insert_your_RPM_account_ID_here",
+		"insights_mode": {
+			"insights_insert_key": "insert_your_insights_insert_key_here",
+			"interval": 60
+		},
+		"infra_mode": {
+			"rpc_listener_port": 9001
+		}
+	},
+	"agents": [
+	           {
+	           	   "name": "descriptive t-eyes account name",
+	        	   	   "host": "127.0.0.1",
+	        	   	   "username": "t-eyes username",
+	        	   	   "password": "t-eyes password",
+	        	   	   "pauseInterval": 20
+	           }
+	]
+}
